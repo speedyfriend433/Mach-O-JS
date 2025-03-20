@@ -1,8 +1,13 @@
 function doIt(machOArray) {
     const LC_SEGMENT_64 = 0x19;
+    const MH_MAGIC_64 = 0xfeedfacf;
     let dataView = new DataView(machOArray.buffer);
     let magic = dataView.getUint32(0x0, true);
     let ncmds = dataView.getUint32(0x10, true);
+    if (magic != MH_MAGIC_64) {
+        log("Not a 64-bit Mach-O!");
+        return;
+    }
     log(`[*] magic: 0x${magic.toString(16)}`);
     log(`[*] ncmds: ${ncmds}`);
     var offset = 32;
@@ -28,7 +33,7 @@ function doIt(machOArray) {
                 for (let i = 0; i < dataView.getUint32(magicOff + 8, false); i++) {
                     if (dataView.getUint32(blobOff, false) == 5) {
                         let entitlementsOff = magicOff + 0x8 + dataView.getUint32(blobOff + 0x4, false);
-                        let entitlementsEndOff = magicOff + 0x8 + dataView.getUint32(blobOff + 0xC, false) - 8
+                        let entitlementsEndOff = magicOff + 0x8 + dataView.getUint32(blobOff + 0xC, false) - 8;
                         log(`[*] entitlementsOff: 0x${entitlementsOff.toString(16)}`);
                         log(`[*] entitlementsEndOff: 0x${entitlementsEndOff.toString(16)}`);
                         let entitlements = dataView.getString(entitlementsOff, entitlementsEndOff - entitlementsOff);
