@@ -1,6 +1,9 @@
+const MH_MAGIC_64 = 0xfeedfacf;
+
+const LC_SEGMENT_64 = 0x19;
+const LC_MAIN = 0x80000028;
+
 function doIt(machOArray) {
-    const LC_SEGMENT_64 = 0x19;
-    const MH_MAGIC_64 = 0xfeedfacf;
     let dataView = new DataView(machOArray.buffer);
     let magic = dataView.getUint32(0x0, true);
     let ncmds = dataView.getUint32(0x10, true);
@@ -50,7 +53,6 @@ function doIt(machOArray) {
 }
 
 function findMainEntryPoint(machOArray) {
-    const LC_MAIN = 0x80000028;
     let dataView = new DataView(machOArray.buffer);
     let magic = dataView.getUint32(0x0, true);
     let ncmds = dataView.getUint32(0x10, true);
