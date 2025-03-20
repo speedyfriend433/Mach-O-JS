@@ -8,5 +8,18 @@ function send(data) {
 
 function log(msg) {
 	send(msg === undefined ? 'undefined' : msg.toString());
-	document.getElementById("log").innerHTML += ""+msg+"</br>";
+	
+	const logElement = document.getElementById("log");
+	let className = "log-entry";
+	
+	if (msg && msg.toString().includes("Found __LINKEDIT")) {
+		className += " success";
+	} else if (msg && msg.toString().includes("[*]")) {
+		className += " highlight";
+	} else if (msg && (msg.toString().includes("Error") || msg.toString().includes("not found"))) {
+		className += " error";
+	}
+	
+	logElement.innerHTML += `<div class="${className}">${msg}</div>`;
+	logElement.scrollTop = logElement.scrollHeight;
 }
