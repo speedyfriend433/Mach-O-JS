@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Document</title>
+                <script type="text/javascript" src="mach-o.js"></script>
+                <script type="text/javascript" src="helper.js"></script>
+    </head>
+    <body>
+        <p id="log">
+        </p>
+        <script>
+            window.onerror = function(message, source, lineno, colno, error) {
+                document.getElementById("log").innerHTML += "<h1 style='color:red'>"+message+" @ "+lineno+"</h1>";
+                try {
+                    ws.send(""+message+" @ "+lineno);
+                } catch (error) {
+                    void(0);
+                }
+                return true;
+            };
+        </script>
+        <input type="file" id="filePicker"/>
+        <script>
+            document.getElementById('filePicker').addEventListener('change', function(event) {
+                let file = event.target.files[0];
+                if (file) {
+                    file.arrayBuffer().then(function(arrayBuffer) {
+                        doIt(new Uint8Array(arrayBuffer));
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
