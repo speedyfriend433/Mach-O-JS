@@ -1,36 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Document</title>
-                <script type="text/javascript" src="mach-o.js"></script>
-                <script type="text/javascript" src="helper.js"></script>
-    </head>
-    <body>
-        <p id="log">
-        </p>
-        <script>
-            window.onerror = function(message, source, lineno, colno, error) {
-                document.getElementById("log").innerHTML += "<h1 style='color:red'>"+message+" @ "+lineno+"</h1>";
-                try {
-                    ws.send(""+message+" @ "+lineno);
-                } catch (error) {
-                    void(0);
-                }
-                return true;
-            };
-        </script>
-        <input type="file" id="filePicker"/>
-        <script>
-            document.getElementById('filePicker').addEventListener('change', function(event) {
-                let file = event.target.files[0];
-                if (file) {
-                    file.arrayBuffer().then(function(arrayBuffer) {
-                        doIt(new Uint8Array(arrayBuffer));
-                    });
-                }
-            });
-        </script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mach-O File Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="mach-o.js"></script>
+    <script type="text/javascript" src="helper.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Mach-O File Analyzer</h1>
+            <p>Analyze Mach-O binary files to extract segment information and entitlements</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="file-upload-container">
+            <label for="filePicker" class="file-upload-label">Choose Mach-O File</label>
+            <input type="file" id="filePicker" class="file-upload-input"/>
+            <div id="fileName" class="file-name">No file selected</div>
+        </div>
+
+        <div class="output-container">
+            <div class="output-header">
+                <div class="output-title">Analysis Results</div>
+                <button id="clearLog" class="clear-btn">Clear Log</button>
+            </div>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Mach-O File Analyzer &copy; 2023</p>
+    </footer>
+
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById("log").innerHTML += `<div class="log-entry error"><h3>${message} @ ${lineno}</h3></div>`;
+            try {
+                ws.send(""+message+" @ "+lineno);
+            } catch (error) {
+                void(0);
+            }
+            return true;
+        };
+
+        document.getElementById('filePicker').addEventListener('change', function(event) {
+            let file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('log').innerHTML = '';
+                
+                file.arrayBuffer().then(function(arrayBuffer) {
+                    doIt(new Uint8Array(arrayBuffer));
+                });
+            }
+        });
+
+        document.getElementById('clearLog').addEventListener('click', function() {
+            document.getElementById('log').innerHTML = '';
+        });
+    </script>
+</body>
 </html>
