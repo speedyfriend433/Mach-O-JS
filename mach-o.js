@@ -5,7 +5,7 @@ function doIt(machOArray) {
     let magic = dataView.getUint32(0x0, true);
     let ncmds = dataView.getUint32(0x10, true);
     if (magic != MH_MAGIC_64) {
-        log("Not a 64-bit Mach-O!");
+        log("[+] Not a 64-bit Mach-O!");
         return;
     }
     log(`[*] magic: 0x${magic.toString(16)}`);
@@ -26,7 +26,7 @@ function doIt(machOArray) {
             log(`[*] fileoff: 0x${fileoff.toString(16)}`);
             log(`[*] filesize: 0x${filesize.toString(16)}`);
             if (segname == "__LINKEDIT") {
-                log("Found __LINKEDIT!!");
+                log("[+] Found __LINKEDIT!!");
                 let magicOff = dataView.findSequenceInRange([0xFA, 0xDE, 0x0C, 0xC0], Number(fileoff), Number(fileoff + filesize));
                 log(`[*] magicOff: 0x${magicOff.toString(16)}`);
                 var blobOff = magicOff + 0xC;
