@@ -13,6 +13,8 @@ function doIt(machOArray) {
     const LC_DYSYMTAB = 0xB;
     const LC_LOAD_DYLIB = 0xC;
     const LC_ID_DYLIB = 0xD;
+    const LC_THREAD = 0x4;        // Adding LC_THREAD
+    const LC_UNIXTHREAD = 0x5;    // Adding LC_UNIXTHREAD
     
     let dataView = new DataView(machOArray.buffer);
     let magic = dataView.getUint32(0x0, true);
@@ -251,6 +253,23 @@ function doIt(machOArray) {
     } else {
         log(`[*] Contains Entitlements: No`);
     }
+    
+    // Check for thread commands
+    let hasThreadCommands = false;
+    offset = 32;
+    for (let i = 0; i < ncmds; i++) {
+        let cmd = dataView.getUint32(offset, true);
+        let cmdsize = dataView.getUint32(offset + 4, true);
+        
+        if (cmd === LC_THREAD || cmd === LC_UNIXTHREAD) {
+            hasThreadCommands = true;
+            break;
+        }
+        
+        offset += cmdsize;
+    }
+    
+    log(`[*] Contains Thread Commands: ${hasThreadCommands ? "Yes" : "No"}`);
     
     // Check for encryption
     let isEncrypted = false;
